@@ -1,0 +1,11 @@
+[
+{ "id": "portal0", "title": "Portal 0", "color": "#673AB7" },
+{ "id": "portal1", "title": "Portal 1", "color": "#3F51B5" },
+{ "id": "portal2", "title": "Portal 2", "color": "#2196F3" },
+{ "id": "portal3", "title": "Portal 3", "color": "#009688" },
+{ "id": "portal4", "title": "Portal 4", "color": "#4CAF50" },
+{ "id": "portal5", "title": "Portal 5", "color": "#FFC107" },
+{ "id": "portal6", "title": "Portal 6", "color": "#FF9800" },
+{ "id": "portal7", "title": "Portal 7", "color": "#F44336" },
+{ "id": "portal8", "title": "Portal 8", "color": "#E91E63" }
+]

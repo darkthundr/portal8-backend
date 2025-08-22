@@ -1,0 +1,60 @@
+plugins {
+    id "com.android.application"
+    id 'com.google.gms.google-services' // Firebase
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.portal8.app.portal8"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        // Enable core library desugaring for Java 8+ APIs
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString() // Ensure this is a string
+    }
+
+    defaultConfig {
+        applicationId "com.portal8.app"
+        minSdkVersion 21
+        targetSdkVersion 35
+        multiDexEnabled true
+        versionCode 7 // UPDATED: Incrementing the version code to 2
+        versionName "7.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("E:/portal8/android/app/portal8-release-key.jks")
+            storePassword "7799199452"
+            keyAlias "portal8key"
+            keyPassword "7799199452"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    // Required for core library desugaring to support Java 8+ APIs
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    // Add other dependencies here if you have any
+}

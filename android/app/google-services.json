@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "3509575474",
+    "project_id": "portal8-113b5",
+    "storage_bucket": "portal8-113b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3509575474:android:e76587083c52df3141812b",
+        "android_client_info": {
+          "package_name": "com.portal8.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3509575474-dml1ktnoio0k6kp95drvcr0gm478e60c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.portal8.app",
+            "certificate_hash": "3ff0a1585104aa62cbcaf4fada93fda3376b8d07"
+          }
+        },
+        {
+          "client_id": "3509575474-i8qrojitt33k2dqfeue2pbc8eaf4fni0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.portal8.app",
+            "certificate_hash": "29237131d83412408be3360997c90fcc881fe473"
+          }
+        },
+        {
+          "client_id": "3509575474-2v72r9pt7em42p6v0h7upn8gbu4dufun.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbeoc0vVUhC7ZNthBqR8-2ek7TbQUgHtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "3509575474-2v72r9pt7em42p6v0h7upn8gbu4dufun.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
