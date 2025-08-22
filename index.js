@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
-// Razorpay setup
+// ---------- Razorpay Setup ----------
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_MODE === 'LIVE'
     ? process.env.RAZORPAY_LIVE_KEY_ID
@@ -16,7 +16,7 @@ const razorpay = new Razorpay({
     : process.env.RAZORPAY_TEST_KEY_SECRET,
 });
 
-// Create Razorpay order
+// ---------- Razorpay Order Creation ----------
 app.post('/create-razorpay-order', async (req, res) => {
   const { amountINR } = req.body;
   try {
@@ -27,11 +27,12 @@ app.post('/create-razorpay-order', async (req, res) => {
     });
     res.json(order);
   } catch (err) {
+    console.error("Razorpay Error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Create PayPal order
+// ---------- PayPal Order Creation ----------
 app.post('/create-paypal-order', async (req, res) => {
   const { amountUSD, mode } = req.body;
   const isLive = mode === 'RELEASE';
@@ -96,11 +97,12 @@ app.post('/create-paypal-order', async (req, res) => {
       approveUrl,
     });
   } catch (err) {
+    console.error("PayPal Order Error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
-// PayPal success route with capture
+// ---------- PayPal Success Route with Capture ----------
 app.get('/paypal-success', async (req, res) => {
   const token = req.query.token;
   if (!token) return res.status(400).send('Missing token');
@@ -153,7 +155,7 @@ app.get('/paypal-success', async (req, res) => {
   }
 });
 
-// PayPal cancel route
+// ---------- PayPal Cancel Route ----------
 app.get('/paypal-cancel', (req, res) => {
   res.send(`
     <h1>❌ Payment Cancelled</h1>
@@ -161,6 +163,7 @@ app.get('/paypal-cancel', (req, res) => {
   `);
 });
 
+// ---------- Server Start ----------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
