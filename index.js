@@ -74,6 +74,12 @@ app.post('/create-paypal-order', async (req, res) => {
             value: amountUSD.toFixed(2),
           },
         }],
+        application_context: {
+          return_url: 'https://portal8.onrender.com/paypal-success',
+          cancel_url: 'https://portal8.onrender.com/paypal-cancel',
+          brand_name: 'Portal8',
+          user_action: 'PAY_NOW',
+        },
       },
       {
         headers: {
@@ -92,6 +98,25 @@ app.post('/create-paypal-order', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// PayPal success route
+app.get('/paypal-success', async (req, res) => {
+  const token = req.query.token;
+  if (!token) return res.status(400).send('Missing token');
+
+  res.send(`
+    <h1>✅ Payment Successful</h1>
+    <p>Your portals will unlock shortly. You may now return to the app.</p>
+  `);
+});
+
+// PayPal cancel route
+app.get('/paypal-cancel', (req, res) => {
+  res.send(`
+    <h1>❌ Payment Cancelled</h1>
+    <p>No worries. You can try again anytime.</p>
+  `);
 });
 
 app.listen(3000, () => console.log('🚀 Server running on port 3000'));
