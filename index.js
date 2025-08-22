@@ -100,15 +100,57 @@ app.post('/create-paypal-order', async (req, res) => {
   }
 });
 
-// PayPal success route
+// PayPal success route with capture
 app.get('/paypal-success', async (req, res) => {
   const token = req.query.token;
   if (!token) return res.status(400).send('Missing token');
 
-  res.send(`
-    <h1>✅ Payment Successful</h1>
-    <p>Your portals will unlock shortly. You may now return to the app.</p>
-  `);
+  const isLive = process.env.PAYPAL_MODE === 'LIVE';
+  const clientId = isLive
+    ? process.env.PAYPAL_LIVE_CLIENT_ID
+    : process.env.PAYPAL_SANDBOX_CLIENT_ID;
+  const clientSecret = isLive
+    ? process.env.PAYPAL_LIVE_SECRET
+    : process.env.PAYPAL_SANDBOX_SECRET;
+  const baseUrl = isLive
+    ? 'https://api-m.paypal.com'
+    : 'https://api-m.sandbox.paypal.com';
+
+  try {
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+    const tokenRes = await axios.post(
+      `${baseUrl}/v1/oauth2/token`,
+      'grant_type=client_credentials',
+      {
+        headers: {
+          Authorization: `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
+
+    const accessToken = tokenRes.data.access_token;
+
+    const captureRes = await axios.post(
+      `${baseUrl}/v2/checkout/orders/${token}/capture`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    res.send(`
+      <h1>✅ Payment Captured</h1>
+      <p>Your portals will unlock shortly. You may now return to the app.</p>
+    `);
+  } catch (err) {
+    console.error("Capture Error:", err.message);
+    res.status(500).send("Payment capture failed");
+  }
 });
 
 // PayPal cancel route
@@ -119,12 +161,7 @@ app.get('/paypal-cancel', (req, res) => {
   `);
 });
 
-app.get('/paypal-success', (req, res) => {
-  res.send(`<h1>✅ Payment Successful</h1><p>You may now return to the app.</p>`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
-app.get('/paypal-cancel', (req, res) => {
-  res.send(`<h1>❌ Payment Cancelled</h1><p>No worries. You can try again anytime.</p>`);
-});
-
-app.listen(3000, () => console.log('🚀 Server running on port 3000'));
