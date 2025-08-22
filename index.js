@@ -119,4 +119,12 @@ app.get('/paypal-cancel', (req, res) => {
   `);
 });
 
+app.get('/paypal-success', (req, res) => {
+  res.send(`<h1>✅ Payment Successful</h1><p>You may now return to the app.</p>`);
+});
+
+app.get('/paypal-cancel', (req, res) => {
+  res.send(`<h1>❌ Payment Cancelled</h1><p>No worries. You can try again anytime.</p>`);
+});
+
 app.listen(3000, () => console.log('🚀 Server running on port 3000'));
