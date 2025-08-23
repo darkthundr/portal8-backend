@@ -2,9 +2,10 @@
   "name": "portal8-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "portal8-backend/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node portal8-backend/server.js"
+    "start": "node server.js"
+
 
   },
   "keywords": [],
