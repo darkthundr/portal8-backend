@@ -5,11 +5,6 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
-<<<<<<< HEAD
-=======
-
-
->>>>>>> befab305da063a27dbdea61dac043704e8828b90
   },
   "keywords": [],
   "author": "",
