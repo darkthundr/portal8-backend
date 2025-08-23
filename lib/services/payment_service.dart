@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentService {
-  /// Hardcoded price maps (edit freely)
   /// INR per-portal prices
   static const List<int> portalPricesINR = [199, 249, 299, 349, 399, 449, 499, 499];
   static const int bundlePriceINR = 1899;
@@ -12,11 +11,10 @@ class PaymentService {
   static const List<int> portalPricesUSD = [10, 12, 13, 14, 15, 16, 17, 17];
   static const int bundlePriceUSD = 79;
 
-  /// Your Render backend URL
+  /// Backend base URL (update if deployed)
   final String serverBaseUrl = 'https://portal8-backend.onrender.com';
 
-
-  /// Get price+currency for a given selection
+  /// Get price and currency for a given selection
   Map<String, dynamic> getPrice({
     required bool isIndia,
     required bool isBundle,
@@ -33,29 +31,33 @@ class PaymentService {
     }
   }
 
-  /// Create Razorpay order via Render backend
+  /// Create Razorpay order via backend
   Future<Map<String, dynamic>> createOrderOnServer({
     required String uid,
     required bool isIndia,
     required bool isBundle,
     required int portalIndex,
   }) async {
-    final price = getPrice(isIndia: isIndia, isBundle: isBundle, portalIndex: portalIndex);
+    final price = getPrice(
+      isIndia: isIndia,
+      isBundle: isBundle,
+      portalIndex: portalIndex,
+    );
 
-    final url = Uri.parse('$serverBaseUrl/create-order');
+    final url = Uri.parse('$serverBaseUrl/createorder');
+
     try {
       final resp = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'uid': uid,
-          'bundle': isBundle,
-          'portalIndex': portalIndex,
+          'amount': price['amount'], // ✅ Send in rupees
           'currency': price['currency'],
-          'amount': price['amount'] * 100, // convert to paisa/cents
-          'country': isIndia ? 'IN' : 'ROW',
+          'receipt': 'receipt_${DateTime.now().millisecondsSinceEpoch}',
         }),
-      );
+      ).timeout(const Duration(seconds: 30)); // ⏱️ Increased timeout
+
+      debugPrint('🔁 Server response: ${resp.statusCode} ${resp.body}');
 
       if (resp.statusCode != 200) {
         throw Exception('Server error: ${resp.statusCode} ${resp.body}');
@@ -66,10 +68,9 @@ class PaymentService {
         throw Exception('Order creation failed: ${resp.body}');
       }
 
-      // Return order object expected by Razorpay
       return Map<String, dynamic>.from(data);
     } catch (e) {
-      debugPrint('Order creation exception: $e');
+      debugPrint('❌ Order creation exception: $e');
       throw Exception('Order error: $e');
     }
   }
