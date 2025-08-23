@@ -1,0 +1,147 @@
+[{
+  "version": "1.0",
+  "image": {
+    "name": "/var/www/imageconvert_usr/data/www/imageconvert.org/image/public/uploadt/l41s_i7ug_210607.jpg",
+    "format": "json",
+    "formatDescription": "The image format and characteristics",
+    "mimeType": "application/json",
+    "class": "DirectClass",
+    "geometry": {
+      "width": 5604,
+      "height": 3965,
+      "x": 0,
+      "y": 0
+    },
+    "resolution": {
+      "x": 100,
+      "y": 100
+    },
+    "printSize": {
+      "x": 56.04,
+      "y": 39.65
+    },
+    "units": "Undefined",
+    "type": "TrueColor",
+    "endianness": "Undefined",
+    "colorspace": "sRGB",
+    "depth": 8,
+    "baseDepth": 8,
+    "channelDepth": {
+      "red": 8,
+      "green": 8,
+      "blue": 8
+    },
+    "pixels": 22219860,
+    "imageStatistics": {
+      "all": {
+        "min": 0,
+        "max": 255,
+        "mean": 126.645,
+        "standardDeviation": 94.5631,
+        "kurtosis": -1.55205,
+        "skewness": 0.31781,
+        "entropy": 0.664732
+      }
+    },
+    "channelStatistics": {
+      "red": {
+        "min": 0,
+        "max": 255,
+        "mean": 126.678,
+        "standardDeviation": 92.7079,
+        "kurtosis": -1.42005,
+        "skewness": 0.458911,
+        "entropy": 0.679783
+      },
+      "green": {
+        "min": 0,
+        "max": 255,
+        "mean": 103.494,
+        "standardDeviation": 105.264,
+        "kurtosis": -1.42254,
+        "skewness": 0.685002,
+        "entropy": 0.595096
+      },
+      "blue": {
+        "min": 0,
+        "max": 255,
+        "mean": 149.762,
+        "standardDeviation": 85.7176,
+        "kurtosis": -1.35999,
+        "skewness": -0.0658131,
+        "entropy": 0.719317
+      }
+    },
+    "renderingIntent": "Perceptual",
+    "gamma": 0.454545,
+    "chromaticity": {
+      "redPrimary": {
+        "x": 0.64,
+        "y": 0.33
+      },
+      "greenPrimary": {
+        "x": 0.3,
+        "y": 0.6
+      },
+      "bluePrimary": {
+        "x": 0.15,
+        "y": 0.06
+      },
+      "whitePrimary": {
+        "x": 0.3127,
+        "y": 0.329
+      }
+    },
+    "backgroundColor": "#FFFFFF",
+    "borderColor": "#DFDFDF",
+    "matteColor": "#BDBDBD",
+    "transparentColor": "#000000",
+    "interlace": "None",
+    "intensity": "Undefined",
+    "compose": "Over",
+    "pageGeometry": {
+      "width": 5604,
+      "height": 3965,
+      "x": 0,
+      "y": 0
+    },
+    "dispose": "Undefined",
+    "iterations": 0,
+    "compression": "JPEG",
+    "quality": 99,
+    "orientation": "Undefined",
+    "properties": {
+      "date:create": "2025-08-04T11:20:28+00:00",
+      "date:modify": "2025-08-04T11:20:28+00:00",
+      "jpeg:colorspace": "2",
+      "jpeg:sampling-factor": "1x1,1x1,1x1",
+      "signature": "964f2bbf76279f0926ec91b9b1439a31850e4479800bfce2e452461fb0fe2e6c"
+    },
+    "profiles": {
+      "8bim": {
+        "length": 732
+      },
+      "app12": {
+        "length": 15
+      },
+      "iptc": {
+        "Image Name[2,5]": ["Space background with galaxy and meteorites"],
+        "Keyword[2,25]": ["astronaut","galaxy","spaceship","solar","system","universe","cartoon","scene","science","moon","satern","comet","meteor","fireball","meteorite","outer space","solar system","man","person","people","scientist","astrology","profession","women","suit","cosmonaut","ship","vehicle","transport","transportation","engineering","fuel","orbiter","discover","discovery","world","scenery","sciences","education","night","dark","nature","cosmos","astronomical","cosmology","planetary","illustration","vector","EPS"],
+        "Caption[2,120]": ["Space background with galaxy and meteorites illustration"],
+        "Unknown[2,0]": [null],
+        "length": 719
+      },
+      "xmp": {
+        "length": 2895
+      }
+    },
+    "tainted": false,
+    "filesize": "2.60052MB",
+    "numberPixels": "22.2199M",
+    "pixelsPerSecond": "90.526MB",
+    "userTime": "0.250u",
+    "elapsedTime": "0:01.245",
+    "version": "ImageMagick 6.9.11-60 Q16 x86_64 2021-01-25 https://imagemagick.org"
+  }
+}
+]

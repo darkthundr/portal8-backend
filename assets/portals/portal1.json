@@ -1,0 +1,307 @@
+{
+  "id": "portal1",
+  "title": "The Illusion of Autopilot",
+  "description": "Wake up from autopilot. Notice the default settings of your life.",
+  "sessions": [
+    {
+      "id": "1.1",
+      "title": "Notice the Default",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.2",
+      "title": "The Phone as Mirror",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.3",
+      "title": "Autopilot Memory",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.4",
+      "title": "Pause to See",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.5",
+      "title": "The Trigger Map",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.6",
+      "title": "The Breath Switch",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.7",
+      "title": "Sensing the Body",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.8",
+      "title": "Tiny Rewires",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.9",
+      "title": "The Inner Narrator",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.10",
+      "title": "Reclaiming Choice",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.11",
+      "title": "The Pause Alarm",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.12",
+      "title": "Listening to Silence",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.13",
+      "title": "The Hand Experiment",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.14",
+      "title": "The Mirror of Others",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.15",
+      "title": "The Habit Tunnel",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.16",
+      "title": "The Space Between",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.17",
+      "title": "The Atom Song",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.18",
+      "title": "A Walk That’s New",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.19",
+      "title": "Anchor to Presence",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    },
+    {
+      "id": "1.20",
+      "title": "Integration & Taste",
+      "hook": "Can you notice one thing you do without deciding? We'll turn that small thing into an opening.",
+      "story": "Imagine scrolling through your phone and suddenly realizing your thumb moved before your mind did. That tiny moment is a door — not a failure. It's where attention can be placed to wake up.",
+      "guidedPractice": [
+        "Slowly choose that action (phone, coffee, reply). Observe every muscle that moves.",
+        "Breathe in for 4 counts, out for 6 — match breath to the action without changing it.",
+        "Visualize the action as atoms moving — empty space dancing; feel the vibration behind the movement."
+      ],
+      "reflection": "Where did your attention go just now? Who was doing the doing?",
+      "microPractice": "For 3 days, before any automatic action, take one deliberate breath and note what changed.",
+      "scientificNote": "Neuroscience: habits are circuits. Attention is like electricity — it can re-route those circuits and create new pathways.",
+      "cosmicAnalogy": "Like a phone auto-update running in the background, your habits update without permission — attention is the 'cancel' button."
+    }
+  ]
+}

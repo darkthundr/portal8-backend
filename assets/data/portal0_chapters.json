@@ -1,0 +1,72 @@
+[
+{
+"id": "mirror_stranger",
+"title": "The Mirror Stranger",
+"teaser": "What if the one watching you... was you?",
+"content": "In this ritual, you’ll face your own gaze and decode the silent language of your reflection. The mirror is not passive — it listens, it remembers, it reflects more than light.",
+"rituals": [
+"Sit before a mirror for 3 minutes in silence",
+"Notice micro-expressions and emotional shifts",
+"Journal what you saw and what saw you"
+],
+"emotionalCheckpoint": "Did you feel seen, or exposed? What stirred beneath the surface?",
+"communityPrompt": "Share a metaphor for your reflection — was it a ghost, a guardian, a glitch?",
+"closingWhisper": "The one who watches is not separate. The mirror is a portal, not a wall."
+},
+{
+"id": "typing_bubble_illusion",
+"title": "The Typing Bubble Illusion",
+"teaser": "That three-dot suspense... what does it awaken?",
+"content": "Explore the emotional charge of anticipation, projection, and digital longing. The typing bubble is a modern oracle — it reveals your inner weather more than the other’s intent.",
+"rituals": [
+"Send a message and wait without checking",
+"Notice your mental stories during the wait",
+"Reflect on the gap between expectation and reality"
+],
+"emotionalCheckpoint": "What did you assume? What did you fear? What did you hope?",
+"communityPrompt": "Describe your emotional weather during the wait — stormy, sunny, foggy?",
+"closingWhisper": "The bubble is not a promise. It is a mirror of your craving."
+},
+{
+"id": "pubg_avatar_swap",
+"title": "The PUBG Avatar Swap",
+"teaser": "Who do you become when the stakes are virtual?",
+"content": "Step into someone else’s skin — not to win, but to witness. This ritual explores identity, empathy, and the masks we wear in digital arenas.",
+"rituals": [
+"Play one match using a radically different avatar",
+"Adopt their imagined backstory and emotional tone",
+"Notice how your decisions, reactions, and language shift"
+],
+"emotionalCheckpoint": "Did you feel more free or more fake? What parts of you emerged or disappeared?",
+"communityPrompt": "Share a moment where the avatar felt more real than you.",
+"closingWhisper": "You are not your mask. But your mask is part of your myth."
+},
+{
+"id": "notification_echo",
+"title": "The Notification Echo",
+"teaser": "Each ping is a whisper — but from whom?",
+"content": "This ritual invites you to decode the emotional resonance of your notifications. What do they summon? What do they silence?",
+"rituals": [
+"Turn off all notifications for 24 hours",
+"Track each moment you reach for your phone",
+"Write down what you hoped to find — and what you feared"
+],
+"emotionalCheckpoint": "What did silence reveal? What did absence amplify?",
+"communityPrompt": "Describe your most haunting phantom notification — the one that never came.",
+"closingWhisper": "The echo you chase is your own voice, longing to be heard."
+},
+{
+"id": "scrolling_as_oracle",
+"title": "Scrolling as Oracle",
+"teaser": "What if your feed was a divination tool?",
+"content": "This ritual transforms your scroll into a sacred inquiry. You’ll ask a question, then interpret the first post you see as an answer — not literally, but symbolically.",
+"rituals": [
+"Ask a deep question aloud (e.g. 'What am I avoiding?')",
+"Open your feed and pause at the first post",
+"Interpret its symbols, tone, and timing as a response"
+],
+"emotionalCheckpoint": "Did the oracle speak truth or trickery? What did you resist?",
+"communityPrompt": "Share your question and the post that answered it — what did it mean to you?",
+"closingWhisper": "The algorithm is not random. It reflects your rhythm, your hunger, your myth."
+}
+]
