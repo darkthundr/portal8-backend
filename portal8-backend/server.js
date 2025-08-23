@@ -9,20 +9,13 @@ app.use(cors());
 
 // ------------------ Select Keys Based on Mode ------------------
 const mode = process.env.RAZORPAY_MODE || 'TEST';
-let key_id, key_secret;
-
-if (mode === 'LIVE') {
-  key_id = process.env.RAZORPAY_LIVE_KEY_ID;
-  key_secret = process.env.RAZORPAY_LIVE_KEY_SECRET;
-} else {
-  key_id = process.env.RAZORPAY_TEST_KEY_ID;
-  key_secret = process.env.RAZORPAY_TEST_KEY_SECRET;
-}
+const key_id = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID;
+const key_secret = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_SECRET : process.env.RAZORPAY_TEST_KEY_SECRET;
 
 // ------------------ Environment Debug ------------------
-console.log('Razorpay Mode:', mode);
-console.log('Using Key ID:', key_id ? key_id : '❌ Missing');
-console.log('Using Key Secret:', key_secret ? '✅ Loaded' : '❌ Missing');
+console.log(`🔑 Razorpay Mode: ${mode}`);
+console.log(`🔐 Key ID: ${key_id ? key_id : '❌ Missing'}`);
+console.log(`🔐 Key Secret: ${key_secret ? '✅ Loaded' : '❌ Missing'}`);
 
 if (!key_id || !key_secret) {
   console.error("❌ Razorpay keys missing! Check your .env file.");
@@ -30,10 +23,7 @@ if (!key_id || !key_secret) {
 }
 
 // ------------------ Razorpay Init ------------------
-const razorpay = new Razorpay({
-  key_id,
-  key_secret,
-});
+const razorpay = new Razorpay({ key_id, key_secret });
 
 // ------------------ Health Check Route ------------------
 app.get('/', (req, res) => {
@@ -42,25 +32,24 @@ app.get('/', (req, res) => {
 
 // ------------------ Create Order Route ------------------
 app.post('/create-order', async (req, res) => {
+  const { amount, currency = 'INR', receipt = `receipt_${Date.now()}` } = req.body;
+
+  if (!amount || isNaN(amount)) {
+    return res.status(400).json({ error: 'Invalid amount' });
+  }
+
   try {
-    const { amount, currency = 'INR', receipt = `receipt_${Date.now()}` } = req.body;
-
-    if (!amount || isNaN(amount)) {
-      return res.status(400).json({ error: 'Invalid amount' });
-    }
-
-    const options = {
+    const order = await razorpay.orders.create({
       amount: amount * 100, // Convert to paise
       currency,
       receipt,
       payment_capture: 1,
-    };
+    });
 
-    const order = await razorpay.orders.create(options);
-    console.log('✅ Order created:', order.id);
+    console.log(`✅ Razorpay Order Created: ${order.id}`);
     res.json(order);
   } catch (error) {
-    console.error('❌ Order creation error:', error);
+    console.error('❌ Error creating order:', error);
     res.status(500).json({ error: error.message });
   }
 });
