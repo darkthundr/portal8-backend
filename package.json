@@ -1,43 +1,19 @@
 {
-<<<<<<< HEAD
-  "dependencies": {
-    "axios": "^1.11.0",
-    "body-parser": "^2.2.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0",
-    "firebase-admin": "^13.4.0",
-    "razorpay": "^2.9.6",
-    "stripe": "^18.4.0"
-  },
-  "name": "portal8",
-  "description": "Exit the Matrix By Entering into 8 Portals",
-  "version": "1.0.0",
-  "main": "setAdminClaim.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
-  },
-=======
   "name": "portal8-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
->>>>>>> c9377447f9387deed544e4908b723983fda9f5d8
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
-<<<<<<< HEAD
-  "license": "ISC"
-=======
   "license": "ISC",
   "dependencies": {
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "cors": "^2.8.5"
   }
->>>>>>> c9377447f9387deed544e4908b723983fda9f5d8
 }
