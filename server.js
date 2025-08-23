@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const Razorpay = require('razorpay');
 const cors = require('cors');
@@ -20,7 +19,7 @@ if (mode === 'LIVE') {
   key_secret = process.env.RAZORPAY_TEST_KEY_SECRET;
 }
 
-// Debug
+// ------------------ Environment Debug ------------------
 console.log('Razorpay Mode:', mode);
 console.log('Using Key ID:', key_id ? key_id : '❌ Missing');
 console.log('Using Key Secret:', key_secret ? '✅ Loaded' : '❌ Missing');
@@ -36,7 +35,7 @@ const razorpay = new Razorpay({
   key_secret,
 });
 
-// ------------------ Test Route ------------------
+// ------------------ Health Check Route ------------------
 app.get('/', (req, res) => {
   res.send('✅ Server is running');
 });
@@ -44,26 +43,31 @@ app.get('/', (req, res) => {
 // ------------------ Create Order Route ------------------
 app.post('/create-order', async (req, res) => {
   try {
-    const { amount, currency = 'INR', receipt = 'receipt#1' } = req.body;
+    const { amount, currency = 'INR', receipt = `receipt_${Date.now()}` } = req.body;
 
     if (!amount || isNaN(amount)) {
       return res.status(400).json({ error: 'Invalid amount' });
     }
 
     const options = {
-      amount: amount * 100, // paise
+      amount: amount * 100, // Convert to paise
       currency,
       receipt,
       payment_capture: 1,
     };
 
     const order = await razorpay.orders.create(options);
-    console.log('Order created:', order.id);
+    console.log('✅ Order created:', order.id);
     res.json(order);
   } catch (error) {
-    console.error('Order creation error:', error);
+    console.error('❌ Order creation error:', error);
     res.status(500).json({ error: error.message });
   }
+});
+
+// ------------------ Test Route ------------------
+app.post('/test', (req, res) => {
+  res.json({ message: '✅ POST /test is working' });
 });
 
 // ------------------ Start Server ------------------
