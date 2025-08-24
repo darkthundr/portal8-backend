@@ -71,6 +71,7 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
+// ✅ Correct port binding for Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
