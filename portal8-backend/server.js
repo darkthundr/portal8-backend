@@ -1,6 +1,3 @@
-app.get('/', (req, res) => {
-  res.send('✅ Root route is working');
-});
 const express = require('express');
 const Razorpay = require('razorpay');
 const cors = require('cors');
@@ -11,6 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Razorpay setup
 const mode = process.env.RAZORPAY_MODE || 'TEST';
 const key_id = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID;
 const key_secret = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_SECRET : process.env.RAZORPAY_TEST_KEY_SECRET;
@@ -22,7 +20,7 @@ if (!key_id || !key_secret) {
 
 const razorpay = new Razorpay({ key_id, key_secret });
 
-// 🌍 Detect country from IP using ipinfo.io
+// Country detection from IP
 async function getCountryFromIP(ip) {
   try {
     const token = process.env.IPINFO_TOKEN;
@@ -35,11 +33,7 @@ async function getCountryFromIP(ip) {
   }
 }
 
-app.get('/test', (req, res) => {
-  res.send('✅ Test route is working');
-});
-
-// 📍 Detect country from GPS coordinates using OpenCage
+// Country detection from GPS
 async function getCountryFromLocation(lat, lng) {
   try {
     const key = process.env.OPENCAGE_KEY;
@@ -53,17 +47,18 @@ async function getCountryFromLocation(lat, lng) {
   }
 }
 
-// ✅ Health check
+// Health check
 app.get('/ping', (req, res) => {
   res.send('✅ Server is alive');
 });
 
-// ✅ Debug route to confirm server is serving routes
+// Debug route
 app.get('/test', (req, res) => {
+  console.log('✅ /test route hit');
   res.send('✅ Test route is working');
 });
 
-// 🌍 Country detection endpoint for Flutter
+// Country detection
 app.get('/geo', async (req, res) => {
   console.log('📡 /geo route hit');
   try {
@@ -88,7 +83,7 @@ app.get('/geo', async (req, res) => {
   }
 });
 
-// 🧾 Create Razorpay order
+// Razorpay order creation
 app.post('/create-order', async (req, res) => {
   try {
     const { lat, lng, amount, receipt = `receipt_${Date.now()}` } = req.body;
@@ -124,9 +119,9 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
-// ✅ Correct port binding for Render (no fallback)
-const PORT = process.env.PORT;
+// Correct port binding for Render
+const PORT = process.env.PORT || 3000;
+console.log(`🛠️ PORT from environment: ${process.env.PORT}`);
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log('✅ /geo route registered and ready');
 });
