@@ -51,8 +51,14 @@ app.get('/ping', (req, res) => {
   res.send('✅ Server is alive');
 });
 
+// ✅ Debug route to confirm server is serving routes
+app.get('/test', (req, res) => {
+  res.send('✅ Test route is working');
+});
+
 // 🌍 Country detection endpoint for Flutter
 app.get('/geo', async (req, res) => {
+  console.log('📡 /geo route hit');
   try {
     const { lat, lng } = req.query;
     let country = null;
@@ -115,4 +121,5 @@ app.post('/create-order', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log('✅ /geo route registered and ready');
 });
