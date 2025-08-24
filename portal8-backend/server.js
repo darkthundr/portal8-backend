@@ -117,8 +117,8 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
-// ✅ Correct port binding for Render
-const PORT = process.env.PORT || 3000;
+// ✅ Correct port binding for Render (no fallback)
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log('✅ /geo route registered and ready');
