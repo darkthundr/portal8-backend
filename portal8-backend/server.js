@@ -32,6 +32,10 @@ async function getCountryFromIP(ip) {
   }
 }
 
+app.get('/test', (req, res) => {
+  res.send('✅ Test route is working');
+});
+
 // 📍 Detect country from GPS coordinates using OpenCage
 async function getCountryFromLocation(lat, lng) {
   try {
