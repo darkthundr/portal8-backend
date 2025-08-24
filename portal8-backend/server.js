@@ -40,6 +40,7 @@ app.get('/ping', (req, res) => {
 app.get('/geo', async (req, res) => {
   const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   const country = await getCountryFromIP(ip);
+  console.log(`🌍 /geo hit from IP: ${ip} → Country: ${country}`);
   res.json({ country });
 });
 
@@ -51,7 +52,9 @@ app.post('/create-order', async (req, res) => {
     const currency = country === 'IN' ? 'INR' : 'USD';
 
     const { amount, receipt = `receipt_${Date.now()}` } = req.body;
-    if (!amount || isNaN(amount)) return res.status(400).json({ error: 'Invalid amount' });
+    if (!amount || isNaN(amount)) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
 
     const order = await razorpay.orders.create({
       amount: amount * 100,
