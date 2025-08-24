@@ -1,3 +1,6 @@
+app.get('/', (req, res) => {
+  res.send('✅ Root route is working');
+});
 const express = require('express');
 const Razorpay = require('razorpay');
 const cors = require('cors');
