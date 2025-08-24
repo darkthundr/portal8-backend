@@ -19,16 +19,30 @@ if (!key_id || !key_secret) {
 
 const razorpay = new Razorpay({ key_id, key_secret });
 
-// 🌍 Utility to detect country from IP using ipinfo.io
+// 🌍 Detect country from IP using ipinfo.io
 async function getCountryFromIP(ip) {
   try {
-    const token = process.env.IPINFO_TOKEN; // Add this to your .env file
+    const token = process.env.IPINFO_TOKEN;
     const res = await fetch(`https://ipinfo.io/${ip}/json?token=${token}`);
     const data = await res.json();
     return data.country || 'IN';
   } catch (err) {
     console.error('🌐 IP lookup failed:', err.message);
     return 'IN';
+  }
+}
+
+// 📍 Detect country from GPS coordinates using OpenCage
+async function getCountryFromLocation(lat, lng) {
+  try {
+    const key = process.env.OPENCAGE_KEY;
+    const res = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${key}`);
+    const data = await res.json();
+    const components = data.results?.[0]?.components;
+    return components?.country_code?.toUpperCase() || null;
+  } catch (err) {
+    console.error('📍 GPS lookup failed:', err.message);
+    return null;
   }
 }
 
@@ -40,9 +54,20 @@ app.get('/ping', (req, res) => {
 // 🌍 Country detection endpoint for Flutter
 app.get('/geo', async (req, res) => {
   try {
-    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress || '8.8.8.8';
-    const country = await getCountryFromIP(ip);
-    console.log(`🌍 /geo hit from IP: ${ip} → Country: ${country}`);
+    const { lat, lng } = req.query;
+    let country = null;
+
+    if (lat && lng) {
+      country = await getCountryFromLocation(lat, lng);
+      console.log(`📍 GPS-based country: ${country}`);
+    }
+
+    if (!country) {
+      const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress || '8.8.8.8';
+      country = await getCountryFromIP(ip);
+      console.log(`🌍 IP-based country: ${country} from IP: ${ip}`);
+    }
+
     res.json({ country });
   } catch (err) {
     console.error('❌ /geo route failed:', err.message);
@@ -53,11 +78,20 @@ app.get('/geo', async (req, res) => {
 // 🧾 Create Razorpay order
 app.post('/create-order', async (req, res) => {
   try {
-    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress || '8.8.8.8';
-    const country = await getCountryFromIP(ip);
+    const { lat, lng, amount, receipt = `receipt_${Date.now()}` } = req.body;
+    let country = null;
+
+    if (lat && lng) {
+      country = await getCountryFromLocation(lat, lng);
+    }
+
+    if (!country) {
+      const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress || '8.8.8.8';
+      country = await getCountryFromIP(ip);
+    }
+
     const currency = country === 'IN' ? 'INR' : 'USD';
 
-    const { amount, receipt = `receipt_${Date.now()}` } = req.body;
     if (!amount || isNaN(amount)) {
       return res.status(400).json({ error: 'Invalid amount' });
     }
@@ -69,7 +103,7 @@ app.post('/create-order', async (req, res) => {
       payment_capture: 1,
     });
 
-    console.log(`✅ Order created: ${order.id} | Currency: ${currency} | IP: ${ip}`);
+    console.log(`✅ Order created: ${order.id} | Currency: ${currency} | Country: ${country}`);
     res.json(order);
   } catch (error) {
     console.error('❌ Order creation error:', error.message);
