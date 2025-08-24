@@ -19,12 +19,13 @@ if (!key_id || !key_secret) {
 
 const razorpay = new Razorpay({ key_id, key_secret });
 
-// 🌍 Utility to detect country from IP
+// 🌍 Utility to detect country from IP using ipinfo.io
 async function getCountryFromIP(ip) {
   try {
-    const res = await fetch(`https://ipapi.co/${ip}/json`);
+    const token = process.env.IPINFO_TOKEN; // Add this to your .env file
+    const res = await fetch(`https://ipinfo.io/${ip}/json?token=${token}`);
     const data = await res.json();
-    return data.country || 'IN'; // fallback to IN
+    return data.country || 'IN';
   } catch (err) {
     console.error('🌐 IP lookup failed:', err.message);
     return 'IN';
@@ -38,16 +39,21 @@ app.get('/ping', (req, res) => {
 
 // 🌍 Country detection endpoint for Flutter
 app.get('/geo', async (req, res) => {
-  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
-  const country = await getCountryFromIP(ip);
-  console.log(`🌍 /geo hit from IP: ${ip} → Country: ${country}`);
-  res.json({ country });
+  try {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress || '8.8.8.8';
+    const country = await getCountryFromIP(ip);
+    console.log(`🌍 /geo hit from IP: ${ip} → Country: ${country}`);
+    res.json({ country });
+  } catch (err) {
+    console.error('❌ /geo route failed:', err.message);
+    res.status(200).json({ country: 'IN', fallback: true });
+  }
 });
 
 // 🧾 Create Razorpay order
 app.post('/create-order', async (req, res) => {
   try {
-    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress || '8.8.8.8';
     const country = await getCountryFromIP(ip);
     const currency = country === 'IN' ? 'INR' : 'USD';
 
