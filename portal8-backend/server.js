@@ -2,13 +2,21 @@ const express = require('express');
 const Razorpay = require('razorpay');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const admin = require('firebase-admin');
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Razorpay setup
+// 🔐 Firebase setup
+const serviceAccount = require('./firebase-service-account.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+const db = admin.firestore();
+
+// 🧾 Razorpay setup
 const mode = process.env.RAZORPAY_MODE || 'TEST';
 const key_id = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID;
 const key_secret = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_SECRET : process.env.RAZORPAY_TEST_KEY_SECRET;
@@ -20,7 +28,7 @@ if (!key_id || !key_secret) {
 
 const razorpay = new Razorpay({ key_id, key_secret });
 
-// Country detection from IP
+// 🌍 Country detection from IP
 async function getCountryFromIP(ip) {
   try {
     const token = process.env.IPINFO_TOKEN;
@@ -33,7 +41,7 @@ async function getCountryFromIP(ip) {
   }
 }
 
-// Country detection from GPS
+// 📍 Country detection from GPS
 async function getCountryFromLocation(lat, lng) {
   try {
     const key = process.env.OPENCAGE_KEY;
@@ -47,13 +55,13 @@ async function getCountryFromLocation(lat, lng) {
   }
 }
 
-// Debug route
+// ✅ Test route
 app.get('/test', (req, res) => {
   console.log('✅ /test route hit');
   res.send('✅ Test route is working');
 });
 
-// Country detection route
+// 🌐 Country detection route
 app.get('/geo', async (req, res) => {
   console.log('📡 /geo route hit');
   try {
@@ -78,26 +86,22 @@ app.get('/geo', async (req, res) => {
   }
 });
 
-// Razorpay order creation
+// 🧾 Razorpay order creation
 app.post('/create-order', async (req, res) => {
   try {
     const { amount, currency, receipt } = req.body;
 
-    // Log incoming payload
     console.log(`📦 Incoming order payload:`, req.body);
 
-    // Validate amount
     if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: 'Invalid amount' });
     }
 
-    // Validate currency
     const supportedCurrencies = ['INR', 'USD'];
     const finalCurrency = supportedCurrencies.includes(currency) ? currency : 'INR';
 
-    // Create Razorpay order
     const order = await razorpay.orders.create({
-      amount: amount * 100, // smallest unit
+      amount: amount * 100,
       currency: finalCurrency,
       receipt: receipt || `receipt_${Date.now()}`,
       payment_capture: 1,
@@ -111,7 +115,46 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
-// Port binding
+// 🔓 Razorpay payment verification + auto-unlock
+app.post('/verify-payment', async (req, res) => {
+  const { paymentId, userId, portalId } = req.body;
+
+  if (!paymentId || !userId || !portalId) {
+    return res.status(400).json({ success: false, error: 'Missing required fields' });
+  }
+
+  try {
+    const response = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic ' + Buffer.from(`${key_id}:${key_secret}`).toString('base64'),
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'captured') {
+      console.log(`✅ Payment verified: ${paymentId}`);
+
+      // 🔓 Unlock portal in Firestore
+      const userRef = db.collection('users').doc(userId);
+      await userRef.set({
+        unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
+      }, { merge: true });
+
+      console.log(`🔓 Portal ${portalId} unlocked for user ${userId}`);
+      return res.json({ success: true });
+    } else {
+      console.warn(`⚠️ Payment not captured: ${paymentId} | Status: ${data.status}`);
+      return res.json({ success: false });
+    }
+  } catch (err) {
+    console.error('❌ Verification failed:', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 🚀 Start server
 const PORT = process.env.PORT || 3000;
 console.log(`🛠️ PORT from environment: ${PORT}`);
 app.listen(PORT, () => {
