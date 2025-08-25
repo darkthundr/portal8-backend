@@ -9,8 +9,15 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 🔐 Firebase setup
-const serviceAccount = require('./firebase-service-account.json');
+// 🔐 Firebase setup from env
+let serviceAccount;
+try {
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} catch (err) {
+  console.error("❌ Failed to parse FIREBASE_SERVICE_ACCOUNT:", err.message);
+  process.exit(1);
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -90,7 +97,6 @@ app.get('/geo', async (req, res) => {
 app.post('/create-order', async (req, res) => {
   try {
     const { amount, currency, receipt } = req.body;
-
     console.log(`📦 Incoming order payload:`, req.body);
 
     if (!amount || isNaN(amount) || amount <= 0) {
@@ -115,7 +121,7 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
-// 🔓 Razorpay payment verification + auto-unlock
+// 🔓 Razorpay payment verification + Firestore unlock
 app.post('/verify-payment', async (req, res) => {
   const { paymentId, userId, portalId } = req.body;
 
@@ -136,14 +142,27 @@ app.post('/verify-payment', async (req, res) => {
     if (data.status === 'captured') {
       console.log(`✅ Payment verified: ${paymentId}`);
 
-      // 🔓 Unlock portal in Firestore
       const userRef = db.collection('users').doc(userId);
-      await userRef.set({
-        unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
-      }, { merge: true });
 
-      console.log(`🔓 Portal ${portalId} unlocked for user ${userId}`);
-      return res.json({ success: true });
+      try {
+        await userRef.set({}, { merge: true }); // ensure doc exists
+        await userRef.update({
+          unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
+          paymentHistory: admin.firestore.FieldValue.arrayUnion({
+            paymentId,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            amount: data.amount ? data.amount / 100 : 0,
+            currency: data.currency || 'INR',
+            type: portalId,
+          }),
+        });
+
+        console.log(`🔓 Portal ${portalId} unlocked and payment logged for user ${userId}`);
+        return res.json({ success: true });
+      } catch (firestoreErr) {
+        console.error(`❌ Firestore write failed: ${firestoreErr.message}`);
+        return res.status(500).json({ success: false, error: 'Firestore write failed' });
+      }
     } else {
       console.warn(`⚠️ Payment not captured: ${paymentId} | Status: ${data.status}`);
       return res.json({ success: false });
