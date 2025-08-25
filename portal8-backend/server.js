@@ -96,7 +96,7 @@ app.get('/geo', async (req, res) => {
 // 🧾 Razorpay order creation
 app.post('/create-order', async (req, res) => {
   try {
-    const { amount, currency, receipt } = req.body;
+    const { amount, currency, receipt, userId, portalId } = req.body;
     console.log(`📦 Incoming order payload:`, req.body);
 
     if (!amount || isNaN(amount) || amount <= 0) {
@@ -111,6 +111,10 @@ app.post('/create-order', async (req, res) => {
       currency: finalCurrency,
       receipt: receipt || `receipt_${Date.now()}`,
       payment_capture: 1,
+      notes: {
+        userId,
+        portalId,
+      },
     });
 
     console.log(`✅ Order created: ${order.id} | Currency: ${order.currency}`);
@@ -145,7 +149,7 @@ app.post('/verify-payment', async (req, res) => {
       const userRef = db.collection('users').doc(userId);
 
       try {
-        await userRef.set({}, { merge: true }); // ensure doc exists
+        await userRef.set({}, { merge: true });
         await userRef.update({
           unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
           paymentHistory: admin.firestore.FieldValue.arrayUnion({
@@ -154,6 +158,7 @@ app.post('/verify-payment', async (req, res) => {
             amount: data.amount ? data.amount / 100 : 0,
             currency: data.currency || 'INR',
             type: portalId,
+            source: 'client',
           }),
         });
 
@@ -170,6 +175,52 @@ app.post('/verify-payment', async (req, res) => {
   } catch (err) {
     console.error('❌ Verification failed:', err.message);
     return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 📡 Razorpay webhook for payment.captured
+app.post('/webhook', async (req, res) => {
+  const payload = req.body;
+  const event = payload.event;
+
+  console.log(`📡 Webhook received: ${event}`);
+
+  if (event === 'payment.captured') {
+    const payment = payload.payload.payment.entity;
+    const paymentId = payment.id;
+    const notes = payment.notes || {};
+    const userId = notes.userId;
+    const portalId = notes.portalId;
+
+    if (!userId || !portalId) {
+      console.warn(`⚠️ Missing userId or portalId in payment notes`);
+      return res.status(400).send('Missing metadata');
+    }
+
+    try {
+      const userRef = db.collection('users').doc(userId);
+      await userRef.set({}, { merge: true });
+      await userRef.update({
+        unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
+        paymentHistory: admin.firestore.FieldValue.arrayUnion({
+          paymentId,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          amount: payment.amount ? payment.amount / 100 : 0,
+          currency: payment.currency || 'INR',
+          type: portalId,
+          source: 'webhook',
+        }),
+      });
+
+      console.log(`✅ Webhook: Portal ${portalId} unlocked for user ${userId}`);
+      res.status(200).send('Success');
+    } catch (err) {
+      console.error(`❌ Webhook Firestore error: ${err.message}`);
+      res.status(500).send('Firestore error');
+    }
+  } else {
+    console.log(`ℹ️ Webhook event ignored: ${event}`);
+    res.status(200).send('Ignored');
   }
 });
 
