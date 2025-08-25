@@ -81,24 +81,29 @@ app.get('/geo', async (req, res) => {
 // Razorpay order creation
 app.post('/create-order', async (req, res) => {
   try {
-    const { amount, currency = 'INR', receipt = `receipt_${Date.now()}` } = req.body;
+    const { amount, currency, receipt } = req.body;
 
+    // Log incoming payload
+    console.log(`📦 Incoming order payload:`, req.body);
+
+    // Validate amount
     if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: 'Invalid amount' });
     }
 
-    if (!['INR', 'USD'].includes(currency)) {
-      return res.status(400).json({ error: 'Unsupported currency' });
-    }
+    // Validate currency
+    const supportedCurrencies = ['INR', 'USD'];
+    const finalCurrency = supportedCurrencies.includes(currency) ? currency : 'INR';
 
+    // Create Razorpay order
     const order = await razorpay.orders.create({
-      amount: amount * 100,
-      currency,
-      receipt,
+      amount: amount * 100, // smallest unit
+      currency: finalCurrency,
+      receipt: receipt || `receipt_${Date.now()}`,
       payment_capture: 1,
     });
 
-    console.log(`✅ Order created: ${order.id} | Currency: ${currency}`);
+    console.log(`✅ Order created: ${order.id} | Currency: ${order.currency}`);
     res.json(order);
   } catch (error) {
     console.error('❌ Order creation error:', error.message);
