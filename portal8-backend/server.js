@@ -8,7 +8,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+<<<<<<< HEAD
 // Razorpay setup
+=======
+>>>>>>> e1f7032 (Update server.js with webhook fix and package updates)
 const mode = process.env.RAZORPAY_MODE || 'TEST';
 const key_id = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID;
 const key_secret = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_SECRET : process.env.RAZORPAY_TEST_KEY_SECRET;
@@ -20,6 +23,7 @@ if (!key_id || !key_secret) {
 
 const razorpay = new Razorpay({ key_id, key_secret });
 
+<<<<<<< HEAD
 // Country detection from IP
 async function getCountryFromIP(ip) {
   try {
@@ -47,11 +51,8 @@ async function getCountryFromLocation(lat, lng) {
   }
 }
 
-// Health check
-app.get('/ping', (req, res) => {
-  res.send('✅ Server is alive');
-});
 
+<<<<<<< HEAD
 // Debug route
 app.get('/test', (req, res) => {
   console.log('✅ /test route hit');
@@ -104,6 +105,13 @@ app.post('/create-order', async (req, res) => {
       return res.status(400).json({ error: 'Invalid amount' });
     }
 
+=======
+app.post('/create-order', async (req, res) => {
+  try {
+    const { amount, currency = 'INR', receipt = `receipt_${Date.now()}` } = req.body;
+    if (!amount || isNaN(amount)) return res.status(400).json({ error: 'Invalid amount' });
+
+>>>>>>> e1f7032 (Update server.js with webhook fix and package updates)
     const order = await razorpay.orders.create({
       amount: amount * 100,
       currency,
@@ -111,7 +119,11 @@ app.post('/create-order', async (req, res) => {
       payment_capture: 1,
     });
 
+<<<<<<< HEAD
     console.log(`✅ Order created: ${order.id} | Currency: ${currency} | Country: ${country}`);
+=======
+    console.log('✅ Order created:', order.id);
+>>>>>>> e1f7032 (Update server.js with webhook fix and package updates)
     res.json(order);
   } catch (error) {
     console.error('❌ Order creation error:', error.message);
@@ -119,7 +131,10 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Correct port binding for Render
+=======
+>>>>>>> e1f7032 (Update server.js with webhook fix and package updates)
 const PORT = process.env.PORT || 3000;
 console.log(`🛠️ PORT from environment: ${process.env.PORT}`);
 app.listen(PORT, () => {
