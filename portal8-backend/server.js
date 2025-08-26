@@ -386,6 +386,10 @@ app.post('/webhook', async (req, res) => {
         }),
       });
 
+      app.get('/webhook', (req, res) => {
+  res.send('✅ Webhook route is alive (but only accepts POST)');
+});
+
       console.log(`✅ Webhook: Portal ${portalId} unlocked for user ${userId}`);
       res.status(200).send('Success');
     } catch (err) {
