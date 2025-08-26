@@ -116,7 +116,7 @@ app.post('/verify-payment', async (req, res) => {
   if (!paymentId || !userId || !portalId) {
     return res.status(400).json({ success: false, error: 'Missing fields' });
   }
-
+console.log('🔍 /verify-payment route hit');
   try {
     const response = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}`, {
       method: 'GET',
@@ -153,6 +153,7 @@ app.post('/verify-payment', async (req, res) => {
 });
 
 // 📡 Razorpay webhook route (raw body parser required)
+
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const payload = JSON.parse(req.body.toString());
