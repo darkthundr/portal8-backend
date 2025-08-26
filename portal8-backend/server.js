@@ -179,17 +179,9 @@ app.post('/verify-payment', async (req, res) => {
   }
 });
 
-// 📡 Razorpay webhook for payment.captured
-const express = require('express');
-const Razorpay = require('razorpay');
-const cors = require('cors');
-const fetch = require('node-fetch');
-const admin = require('firebase-admin');
-require('dotenv').config();
-
-const app = express();
-app.use(express.json());
-app.use(cors());
+app.get('/webhook', (req, res) => {
+  res.send('✅ Webhook endpoint is live (but only accepts POST)');
+});
 
 // 🔐 Firebase setup from env
 let serviceAccount;
