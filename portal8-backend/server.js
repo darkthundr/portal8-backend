@@ -352,14 +352,15 @@ app.post('/verify-payment', async (req, res) => {
   }
 });
 
-// 📡 Razorpay webhook for payment.captured
-app.post('/webhook', async (req, res) => {
-  const payload = req.body;
-  const event = payload.event;
+const bodyParser = require('body-parser');
 
-  console.log(`📡 Webhook received: ${event}`);
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+  try {
+    const payload = JSON.parse(req.body.toString());
+    console.log(`📡 Webhook received: ${payload.event}`);
 
-  if (event === 'payment.captured') {
+    if (payload.event !== 'payment.captured') return res.status(200).send('Ignored');
+
     const payment = payload.payload.payment.entity;
     const paymentId = payment.id;
     const notes = payment.notes || {};
@@ -371,34 +372,25 @@ app.post('/webhook', async (req, res) => {
       return res.status(400).send('Missing metadata');
     }
 
-    try {
-      const userRef = db.collection('users').doc(userId);
-      await userRef.set({}, { merge: true });
-      await userRef.update({
-        unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
-        paymentHistory: admin.firestore.FieldValue.arrayUnion({
-          paymentId,
-          timestamp: admin.firestore.FieldValue.serverTimestamp(),
-          amount: payment.amount ? payment.amount / 100 : 0,
-          currency: payment.currency || 'INR',
-          type: portalId,
-          source: 'webhook',
-        }),
-      });
+    const userRef = db.collection('users').doc(userId);
+    await userRef.set({}, { merge: true });
+    await userRef.update({
+      unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
+      paymentHistory: admin.firestore.FieldValue.arrayUnion({
+        paymentId,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        amount: payment.amount ? payment.amount / 100 : 0,
+        currency: payment.currency || 'INR',
+        type: portalId,
+        source: 'webhook',
+      }),
+    });
 
-      app.get('/webhook', (req, res) => {
-  res.send('✅ Webhook route is alive (but only accepts POST)');
-});
-
-      console.log(`✅ Webhook: Portal ${portalId} unlocked for user ${userId}`);
-      res.status(200).send('Success');
-    } catch (err) {
-      console.error(`❌ Webhook Firestore error: ${err.message}`);
-      res.status(500).send('Firestore error');
-    }
-  } else {
-    console.log(`ℹ️ Webhook event ignored: ${event}`);
-    res.status(200).send('Ignored');
+    console.log(`✅ Webhook: Portal ${portalId} unlocked for user ${userId}`);
+    res.status(200).send('Success');
+  } catch (err) {
+    console.error(`❌ Webhook error: ${err.message}`);
+    res.status(500).send('Webhook failed');
   }
 });
 
