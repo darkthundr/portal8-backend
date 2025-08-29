@@ -23,23 +23,17 @@ app.use((req, res, next) => {
 // 🔐 Firebase setup
 let serviceAccount;
 try {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_FILE) {
-    // Load JSON from project root
-    serviceAccount = require(path.join(__dirname, process.env.FIREBASE_SERVICE_ACCOUNT_FILE));
-  } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    // Load JSON from env variable
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  } else {
-    throw new Error("No Firebase service account provided");
-  }
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 } catch (err) {
-  console.error("❌ Failed to load Firebase service account:", err.message);
+  console.error("❌ Failed to parse FIREBASE_SERVICE_ACCOUNT:", err.message);
   process.exit(1);
 }
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
+
+
+
 const db = admin.firestore();
 
 // 🧾 Razorpay setup
