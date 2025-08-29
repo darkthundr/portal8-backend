@@ -8,8 +8,16 @@ const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+
+// 👀 Skip webhook from JSON parsing (must remain raw)
+app.use((req, res, next) => {
+  if (req.originalUrl === '/webhook') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 // 🔐 Firebase setup
 let serviceAccount;
@@ -26,20 +34,18 @@ const db = admin.firestore();
 
 // 🧾 Razorpay setup
 const mode = process.env.RAZORPAY_MODE || 'TEST';
-const key_id = mode === 'LIVE'
-  ? process.env.RAZORPAY_LIVE_KEY_ID
-  : process.env.RAZORPAY_TEST_KEY_ID;
-const key_secret = mode === 'LIVE'
-  ? process.env.RAZORPAY_LIVE_KEY_SECRET
-  : process.env.RAZORPAY_TEST_KEY_SECRET;
+const key_id =
+  mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID;
+const key_secret =
+  mode === 'LIVE'
+    ? process.env.RAZORPAY_LIVE_KEY_SECRET
+    : process.env.RAZORPAY_TEST_KEY_SECRET;
 
 const razorpay = new Razorpay({ key_id, key_secret });
 
 /* ------------------------------------------------------------------
    🌍 Country Detection Helpers
 ------------------------------------------------------------------ */
-
-// Country from IP
 async function getCountryFromIP(ip) {
   try {
     const token = process.env.IPINFO_TOKEN;
@@ -52,7 +58,6 @@ async function getCountryFromIP(ip) {
   }
 }
 
-// Country from GPS coordinates
 async function getCountryFromLocation(lat, lng) {
   try {
     const key = process.env.OPENCAGE_KEY;
@@ -60,8 +65,7 @@ async function getCountryFromLocation(lat, lng) {
       `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${key}`
     );
     const data = await res.json();
-    const components = data.results?.[0]?.components;
-    return components?.country_code?.toUpperCase() || null;
+    return data.results?.[0]?.components?.country_code?.toUpperCase() || null;
   } catch (err) {
     console.error('📍 GPS lookup failed:', err.message);
     return null;
@@ -72,12 +76,12 @@ async function getCountryFromLocation(lat, lng) {
    ✅ Routes
 ------------------------------------------------------------------ */
 
-// Test route
+// Health check
 app.get('/test', (req, res) => {
   res.send('✅ Server is live');
 });
 
-// 🌐 Country detection route
+// 🌐 Country detection
 app.get('/geo', async (req, res) => {
   try {
     const { lat, lng } = req.query;
@@ -90,19 +94,19 @@ app.get('/geo', async (req, res) => {
     if (!country) {
       const ip =
         req.headers['x-forwarded-for']?.split(',')[0] ||
-        req.connection.remoteAddress ||
+        req.ip ||
         '8.8.8.8';
       country = await getCountryFromIP(ip);
     }
 
     res.json({ country });
   } catch (err) {
-    console.error('❌ /geo route failed:', err.message);
+    console.error('❌ /geo failed:', err.message);
     res.status(200).json({ country: 'IN', fallback: true });
   }
 });
 
-// 🧾 Razorpay order creation
+// 🧾 Create Razorpay Order
 app.post('/create-order', async (req, res) => {
   try {
     const { amount, currency, receipt, userId, portalId } = req.body;
@@ -128,7 +132,7 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
-// 🔓 Razorpay payment verification (client side)
+// 🔓 Verify Razorpay Payment
 app.post('/verify-payment', async (req, res) => {
   const { orderId, paymentId, signature, userId, portalId } = req.body;
 
@@ -137,7 +141,6 @@ app.post('/verify-payment', async (req, res) => {
   }
 
   try {
-    // Generate expected signature
     const expectedSignature = crypto
       .createHmac('sha256', key_secret)
       .update(orderId + "|" + paymentId)
@@ -147,7 +150,6 @@ app.post('/verify-payment', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid signature' });
     }
 
-    // ✅ Signature valid → unlock portal
     const userRef = db.collection('users').doc(userId);
     await userRef.set({}, { merge: true });
     await userRef.update({
@@ -168,7 +170,7 @@ app.post('/verify-payment', async (req, res) => {
   }
 });
 
-// 📡 Razorpay webhook (backup, server-to-server)
+// 📡 Razorpay Webhook (server-to-server)
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const payload = JSON.parse(req.body.toString());
@@ -176,9 +178,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     if (payload.event !== 'payment.captured') return res.status(200).send('Ignored');
 
     const payment = payload.payload.payment.entity;
-    const notes = payment.notes || {};
-    const userId = notes.userId;
-    const portalId = notes.portalId;
+    const { userId, portalId } = payment.notes || {};
 
     if (!userId || !portalId) {
       return res.status(400).send('Missing metadata');
