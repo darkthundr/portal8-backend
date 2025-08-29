@@ -5,6 +5,7 @@ const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -22,11 +23,20 @@ app.use((req, res, next) => {
 // 🔐 Firebase setup
 let serviceAccount;
 try {
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_FILE) {
+    // Load JSON from project root
+    serviceAccount = require(path.join(__dirname, process.env.FIREBASE_SERVICE_ACCOUNT_FILE));
+  } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    // Load JSON from env variable
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  } else {
+    throw new Error("No Firebase service account provided");
+  }
 } catch (err) {
-  console.error("❌ Failed to parse FIREBASE_SERVICE_ACCOUNT:", err.message);
+  console.error("❌ Failed to load Firebase service account:", err.message);
   process.exit(1);
 }
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -75,27 +85,20 @@ async function getCountryFromLocation(lat, lng) {
 /* ------------------------------------------------------------------
    ✅ Routes
 ------------------------------------------------------------------ */
-
-// Health check
 app.get('/', (req, res) => {
   res.send('✅ Razorpay backend running');
 });
 
-// 🌐 Country detection
 app.get('/geo', async (req, res) => {
   try {
     const { lat, lng } = req.query;
     let country = null;
 
-    if (lat && lng) {
-      country = await getCountryFromLocation(lat, lng);
-    }
+    if (lat && lng) country = await getCountryFromLocation(lat, lng);
 
     if (!country) {
       const ip =
-        req.headers['x-forwarded-for']?.split(',')[0] ||
-        req.ip ||
-        '8.8.8.8';
+        req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '8.8.8.8';
       country = await getCountryFromIP(ip);
     }
 
