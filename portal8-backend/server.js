@@ -5,7 +5,6 @@ const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
-const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -31,11 +30,6 @@ try {
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-
-
-
-
-
 const db = admin.firestore();
 
 // 🧾 Razorpay setup
@@ -82,19 +76,16 @@ async function getCountryFromLocation(lat, lng) {
    ✅ Routes
 ------------------------------------------------------------------ */
 
-// Health + echo for quick diagnostics
+// Health check
 app.get('/health', (req, res) => {
   res.json({ ok: true, time: new Date().toISOString() });
 });
 
-app.post('/verify-payment-test', (req, res) => {
-  console.log('VERIFY-PAYMENT-TEST HIT', req.body);
-  res.json({ ok: true, received: req.body });
-});
 app.get('/', (req, res) => {
   res.send('✅ Razorpay backend running');
 });
 
+// 🌍 Geo API
 app.get('/geo', async (req, res) => {
   try {
     const { lat, lng } = req.query;
@@ -127,7 +118,7 @@ app.post('/create-order', async (req, res) => {
     const finalCurrency = ['INR', 'USD'].includes(currency) ? currency : 'INR';
 
     const order = await razorpay.orders.create({
-      amount: amount * 100, // paise
+      amount: amount * 100, // convert to paisa
       currency: finalCurrency,
       receipt: receipt || `receipt_${Date.now()}`,
       payment_capture: 1,
@@ -141,7 +132,7 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
-// 🔓 Verify Razorpay Payment
+// 🔓 Verify Razorpay Payment (used by Flutter)
 app.post('/verify-payment', async (req, res) => {
   const { orderId, paymentId, signature, userId, portalId } = req.body;
 
@@ -159,6 +150,7 @@ app.post('/verify-payment', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid signature' });
     }
 
+    // Update Firestore
     const userRef = db.collection('users').doc(userId);
     await userRef.set({}, { merge: true });
     await userRef.update({
