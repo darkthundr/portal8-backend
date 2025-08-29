@@ -8,6 +8,9 @@ const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
+app.get('/', (req, res) => {
+  res.send('Hello, World! This is the root route.');
+});
 app.use(cors());
 
 // 👀 Skip webhook from JSON parsing (must remain raw)
