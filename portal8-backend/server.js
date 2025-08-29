@@ -4,6 +4,7 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
@@ -25,11 +26,20 @@ const db = admin.firestore();
 
 // 🧾 Razorpay setup
 const mode = process.env.RAZORPAY_MODE || 'TEST';
-const key_id = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID;
-const key_secret = mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_SECRET : process.env.RAZORPAY_TEST_KEY_SECRET;
+const key_id = mode === 'LIVE'
+  ? process.env.RAZORPAY_LIVE_KEY_ID
+  : process.env.RAZORPAY_TEST_KEY_ID;
+const key_secret = mode === 'LIVE'
+  ? process.env.RAZORPAY_LIVE_KEY_SECRET
+  : process.env.RAZORPAY_TEST_KEY_SECRET;
+
 const razorpay = new Razorpay({ key_id, key_secret });
 
-// 🌍 Country detection from IP
+/* ------------------------------------------------------------------
+   🌍 Country Detection Helpers
+------------------------------------------------------------------ */
+
+// Country from IP
 async function getCountryFromIP(ip) {
   try {
     const token = process.env.IPINFO_TOKEN;
@@ -42,11 +52,13 @@ async function getCountryFromIP(ip) {
   }
 }
 
-// 📍 Country detection from GPS
+// Country from GPS coordinates
 async function getCountryFromLocation(lat, lng) {
   try {
     const key = process.env.OPENCAGE_KEY;
-    const res = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${key}`);
+    const res = await fetch(
+      `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${key}`
+    );
     const data = await res.json();
     const components = data.results?.[0]?.components;
     return components?.country_code?.toUpperCase() || null;
@@ -56,7 +68,11 @@ async function getCountryFromLocation(lat, lng) {
   }
 }
 
-// ✅ Test route
+/* ------------------------------------------------------------------
+   ✅ Routes
+------------------------------------------------------------------ */
+
+// Test route
 app.get('/test', (req, res) => {
   res.send('✅ Server is live');
 });
@@ -72,7 +88,10 @@ app.get('/geo', async (req, res) => {
     }
 
     if (!country) {
-      const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress || '8.8.8.8';
+      const ip =
+        req.headers['x-forwarded-for']?.split(',')[0] ||
+        req.connection.remoteAddress ||
+        '8.8.8.8';
       country = await getCountryFromIP(ip);
     }
 
@@ -95,7 +114,7 @@ app.post('/create-order', async (req, res) => {
     const finalCurrency = ['INR', 'USD'].includes(currency) ? currency : 'INR';
 
     const order = await razorpay.orders.create({
-      amount: amount * 100,
+      amount: amount * 100, // paise
       currency: finalCurrency,
       receipt: receipt || `receipt_${Date.now()}`,
       payment_capture: 1,
@@ -109,51 +128,47 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
-// 🔓 Razorpay payment verification
+// 🔓 Razorpay payment verification (client side)
 app.post('/verify-payment', async (req, res) => {
-  const { paymentId, userId, portalId } = req.body;
+  const { orderId, paymentId, signature, userId, portalId } = req.body;
 
-  if (!paymentId || !userId || !portalId) {
+  if (!orderId || !paymentId || !signature || !userId || !portalId) {
     return res.status(400).json({ success: false, error: 'Missing fields' });
   }
-console.log('🔍 /verify-payment route hit');
+
   try {
-    const response = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic ' + Buffer.from(`${key_id}:${key_secret}`).toString('base64'),
-      },
+    // Generate expected signature
+    const expectedSignature = crypto
+      .createHmac('sha256', key_secret)
+      .update(orderId + "|" + paymentId)
+      .digest('hex');
+
+    if (expectedSignature !== signature) {
+      return res.status(400).json({ success: false, error: 'Invalid signature' });
+    }
+
+    // ✅ Signature valid → unlock portal
+    const userRef = db.collection('users').doc(userId);
+    await userRef.set({}, { merge: true });
+    await userRef.update({
+      unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
+      paymentHistory: admin.firestore.FieldValue.arrayUnion({
+        orderId,
+        paymentId,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        type: portalId,
+        source: 'client-verify',
+      }),
     });
 
-    const data = await response.json();
-
-    if (data.status === 'captured') {
-      const userRef = db.collection('users').doc(userId);
-      await userRef.set({}, { merge: true });
-      await userRef.update({
-        unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
-        paymentHistory: admin.firestore.FieldValue.arrayUnion({
-          paymentId,
-          timestamp: admin.firestore.FieldValue.serverTimestamp(),
-          amount: data.amount / 100,
-          currency: data.currency,
-          type: portalId,
-          source: 'client',
-        }),
-      });
-
-      return res.json({ success: true });
-    } else {
-      return res.json({ success: false });
-    }
+    res.json({ success: true });
   } catch (err) {
     console.error('❌ Verification error:', err.message);
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// 📡 Razorpay webhook route (raw body parser required)
-
+// 📡 Razorpay webhook (backup, server-to-server)
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const payload = JSON.parse(req.body.toString());
@@ -190,6 +205,9 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
   }
 });
 
+/* ------------------------------------------------------------------
+   🚀 Start server
+------------------------------------------------------------------ */
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
