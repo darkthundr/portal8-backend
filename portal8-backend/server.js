@@ -1,31 +1,35 @@
-// server.js
 import express from "express";
 import Razorpay from "razorpay";
 import crypto from "crypto";
+import bodyParser from "body-parser";
 import cors from "cors";
 
 const app = express();
+const PORT = process.env.PORT || 10000;
+
+// Middlewares
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// ✅ Razorpay instance
+// Razorpay instance
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_R8SPavSwbFwtFT",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "Pg6KUonAlGPXbUU51FA4hKKN",
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ✅ Test route
+// 🟢 Default root route
 app.get("/", (req, res) => {
-  res.send("✅ Portal 8 backend is live!");
+  res.send("✅ Portal8 backend is running");
 });
 
-// ✅ Create Order
+// 🟢 Create Razorpay order
 app.post("/create-order", async (req, res) => {
   try {
     const { amount, currency, receipt } = req.body;
 
     const options = {
-      amount: amount * 100, // Razorpay works in paise
+      amount: amount * 100, // amount in paise
       currency: currency || "INR",
       receipt: receipt || "receipt#1",
     };
@@ -33,39 +37,50 @@ app.post("/create-order", async (req, res) => {
     const order = await razorpay.orders.create(options);
     console.log("✅ Order created:", order);
     res.json(order);
-  } catch (err) {
-    console.error("❌ Order creation failed:", err);
+  } catch (error) {
+    console.error("❌ Error creating order:", error);
     res.status(500).json({ error: "Failed to create order" });
   }
 });
 
-// ✅ Verify Payment
+// 🟢 Verify payment
 app.post("/verify-payment", (req, res) => {
   try {
     const { orderId, paymentId, signature } = req.body;
 
     const body = orderId + "|" + paymentId;
-
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "Pg6KUonAlGPXbUU51FA4hKKN")
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(body.toString())
       .digest("hex");
 
     if (expectedSignature === signature) {
-      console.log("✅ Payment verified:", { orderId, paymentId });
-      res.json({ success: true, message: "Payment verified successfully" });
+      console.log("✅ Payment verified:", paymentId);
+      return res.json({ success: true, message: "Payment verified" });
     } else {
-      console.log("❌ Invalid signature:", signature);
-      res.status(400).json({ success: false, message: "Invalid signature" });
+      console.warn("❌ Signature mismatch");
+      return res.status(400).json({ success: false, message: "Invalid signature" });
     }
-  } catch (err) {
-    console.error("❌ Verification error:", err);
-    res.status(500).json({ error: "Payment verification failed" });
+  } catch (error) {
+    console.error("❌ Error verifying payment:", error);
+    res.status(500).json({ success: false, message: "Verification failed" });
   }
 });
 
-// ✅ Server Listen
-const PORT = process.env.PORT || 10000;
+// 🟢 Geo route
+app.get("/geo", (req, res) => {
+  res.json({
+    ip: req.ip,
+    country: req.headers["x-vercel-ip-country"] || "Unknown",
+  });
+});
+
+// 🟢 IP route
+app.get("/ip", (req, res) => {
+  res.json({ ip: req.ip });
+});
+
+// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
