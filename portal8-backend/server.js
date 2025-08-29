@@ -34,6 +34,8 @@ admin.initializeApp({
 
 
 
+
+
 const db = admin.firestore();
 
 // 🧾 Razorpay setup
@@ -79,6 +81,16 @@ async function getCountryFromLocation(lat, lng) {
 /* ------------------------------------------------------------------
    ✅ Routes
 ------------------------------------------------------------------ */
+
+// Health + echo for quick diagnostics
+app.get('/health', (req, res) => {
+  res.json({ ok: true, time: new Date().toISOString() });
+});
+
+app.post('/verify-payment-test', (req, res) => {
+  console.log('VERIFY-PAYMENT-TEST HIT', req.body);
+  res.json({ ok: true, received: req.body });
+});
 app.get('/', (req, res) => {
   res.send('✅ Razorpay backend running');
 });
