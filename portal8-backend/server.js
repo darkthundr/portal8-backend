@@ -1,214 +1,70 @@
-const express = require('express');
-const Razorpay = require('razorpay');
-const cors = require('cors');
-const fetch = require('node-fetch');
-const admin = require('firebase-admin');
-const bodyParser = require('body-parser');
-const crypto = require('crypto');
-require('dotenv').config();
+// server.js
+import express from "express";
+import Razorpay from "razorpay";
+import crypto from "crypto";
+import cors from "cors";
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
-// 👀 Skip webhook from JSON parsing (must remain raw)
-app.use((req, res, next) => {
-  if (req.originalUrl === '/webhook') {
-    next();
-  } else {
-    express.json()(req, res, next);
-  }
+// ✅ Razorpay instance
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_mVunB5ED4QNnob",
+  key_secret: process.env.RAZORPAY_KEY_SECRET || "your_secret_here",
 });
 
-// 🔐 Firebase setup
-let serviceAccount;
-try {
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-} catch (err) {
-  console.error("❌ Failed to parse FIREBASE_SERVICE_ACCOUNT:", err.message);
-  process.exit(1);
-}
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+// ✅ Test route
+app.get("/", (req, res) => {
+  res.send("✅ Portal 8 backend is live!");
 });
-const db = admin.firestore();
 
-// 🧾 Razorpay setup
-const mode = process.env.RAZORPAY_MODE || 'TEST';
-const key_id =
-  mode === 'LIVE' ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID;
-const key_secret =
-  mode === 'LIVE'
-    ? process.env.RAZORPAY_LIVE_KEY_SECRET
-    : process.env.RAZORPAY_TEST_KEY_SECRET;
-
-const razorpay = new Razorpay({ key_id, key_secret });
-
-/* ------------------------------------------------------------------
-   🌍 Country Detection Helpers
------------------------------------------------------------------- */
-async function getCountryFromIP(ip) {
+// ✅ Create Order
+app.post("/create-order", async (req, res) => {
   try {
-    const token = process.env.IPINFO_TOKEN;
-    const res = await fetch(`https://ipinfo.io/${ip}/json?token=${token}`);
-    const data = await res.json();
-    return data.country || 'IN';
-  } catch (err) {
-    console.error('🌐 IP lookup failed:', err.message);
-    return 'IN';
-  }
-}
+    const { amount, currency, receipt } = req.body;
 
-async function getCountryFromLocation(lat, lng) {
-  try {
-    const key = process.env.OPENCAGE_KEY;
-    const res = await fetch(
-      `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${key}`
-    );
-    const data = await res.json();
-    return data.results?.[0]?.components?.country_code?.toUpperCase() || null;
-  } catch (err) {
-    console.error('📍 GPS lookup failed:', err.message);
-    return null;
-  }
-}
+    const options = {
+      amount: amount * 100, // Razorpay works in paise
+      currency: currency || "INR",
+      receipt: receipt || "receipt#1",
+    };
 
-/* ------------------------------------------------------------------
-   ✅ Routes
------------------------------------------------------------------- */
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ ok: true, time: new Date().toISOString() });
-});
-
-app.get('/', (req, res) => {
-  res.send('✅ Razorpay backend running');
-});
-
-// 🌍 Geo API
-app.get('/geo', async (req, res) => {
-  try {
-    const { lat, lng } = req.query;
-    let country = null;
-
-    if (lat && lng) country = await getCountryFromLocation(lat, lng);
-
-    if (!country) {
-      const ip =
-        req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '8.8.8.8';
-      country = await getCountryFromIP(ip);
-    }
-
-    res.json({ country });
-  } catch (err) {
-    console.error('❌ /geo failed:', err.message);
-    res.status(200).json({ country: 'IN', fallback: true });
-  }
-});
-
-// 🧾 Create Razorpay Order
-app.post('/create-order', async (req, res) => {
-  try {
-    const { amount, currency, receipt, userId, portalId } = req.body;
-
-    if (!amount || !userId || !portalId) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    const finalCurrency = ['INR', 'USD'].includes(currency) ? currency : 'INR';
-
-    const order = await razorpay.orders.create({
-      amount: amount * 100, // convert to paisa
-      currency: finalCurrency,
-      receipt: receipt || `receipt_${Date.now()}`,
-      payment_capture: 1,
-      notes: { userId, portalId },
-    });
-
+    const order = await razorpay.orders.create(options);
+    console.log("✅ Order created:", order);
     res.json(order);
-  } catch (error) {
-    console.error('❌ Order creation error:', error.message);
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    console.error("❌ Order creation failed:", err);
+    res.status(500).json({ error: "Failed to create order" });
   }
 });
 
-// 🔓 Verify Razorpay Payment (used by Flutter)
-app.post('/verify-payment', async (req, res) => {
-  const { orderId, paymentId, signature, userId, portalId } = req.body;
-
-  if (!orderId || !paymentId || !signature || !userId || !portalId) {
-    return res.status(400).json({ success: false, error: 'Missing fields' });
-  }
-
+// ✅ Verify Payment
+app.post("/verify-payment", (req, res) => {
   try {
+    const { orderId, paymentId, signature } = req.body;
+
+    const body = orderId + "|" + paymentId;
+
     const expectedSignature = crypto
-      .createHmac('sha256', key_secret)
-      .update(orderId + "|" + paymentId)
-      .digest('hex');
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "your_secret_here")
+      .update(body.toString())
+      .digest("hex");
 
-    if (expectedSignature !== signature) {
-      return res.status(400).json({ success: false, error: 'Invalid signature' });
+    if (expectedSignature === signature) {
+      console.log("✅ Payment verified:", { orderId, paymentId });
+      res.json({ success: true, message: "Payment verified successfully" });
+    } else {
+      console.log("❌ Invalid signature:", signature);
+      res.status(400).json({ success: false, message: "Invalid signature" });
     }
-
-    // Update Firestore
-    const userRef = db.collection('users').doc(userId);
-    await userRef.set({}, { merge: true });
-    await userRef.update({
-      unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
-      paymentHistory: admin.firestore.FieldValue.arrayUnion({
-        orderId,
-        paymentId,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
-        type: portalId,
-        source: 'client-verify',
-      }),
-    });
-
-    res.json({ success: true });
   } catch (err) {
-    console.error('❌ Verification error:', err.message);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("❌ Verification error:", err);
+    res.status(500).json({ error: "Payment verification failed" });
   }
 });
 
-// 📡 Razorpay Webhook (server-to-server)
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
-  try {
-    const payload = JSON.parse(req.body.toString());
-
-    if (payload.event !== 'payment.captured') return res.status(200).send('Ignored');
-
-    const payment = payload.payload.payment.entity;
-    const { userId, portalId } = payment.notes || {};
-
-    if (!userId || !portalId) {
-      return res.status(400).send('Missing metadata');
-    }
-
-    const userRef = db.collection('users').doc(userId);
-    await userRef.set({}, { merge: true });
-    await userRef.update({
-      unlockedPortals: admin.firestore.FieldValue.arrayUnion(portalId),
-      paymentHistory: admin.firestore.FieldValue.arrayUnion({
-        paymentId: payment.id,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
-        amount: payment.amount / 100,
-        currency: payment.currency,
-        type: portalId,
-        source: 'webhook',
-      }),
-    });
-
-    res.status(200).send('Success');
-  } catch (err) {
-    console.error('❌ Webhook error:', err.message);
-    res.status(500).send('Webhook failed');
-  }
-});
-
-/* ------------------------------------------------------------------
-   🚀 Start server
------------------------------------------------------------------- */
+// ✅ Server Listen
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
