@@ -10,8 +10,8 @@ app.use(express.json());
 
 // ✅ Razorpay instance
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_mVunB5ED4QNnob",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "your_secret_here",
+  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_R8SPavSwbFwtFT",
+  key_secret: process.env.RAZORPAY_KEY_SECRET || "Pg6KUonAlGPXbUU51FA4hKKN",
 });
 
 // ✅ Test route
