@@ -77,8 +77,8 @@ async function getCountryFromLocation(lat, lng) {
 ------------------------------------------------------------------ */
 
 // Health check
-app.get('/test', (req, res) => {
-  res.send('✅ Server is live');
+app.get('/', (req, res) => {
+  res.send('✅ Razorpay backend running');
 });
 
 // 🌐 Country detection
